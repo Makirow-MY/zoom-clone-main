@@ -14,9 +14,10 @@ const API_KEY = "fc8dzxhpcru8";
 const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const [videoClient, setVideoClient] = useState<StreamVideoClient>();
   const { user, isLoaded } = useUser();
+  const client = videoClient;
  const router = useRouter()
 
-   
+   console.log("this is user",user)
   useEffect(() => {
     if (!API_KEY) throw new Error('Stream API key is missing');
 
@@ -24,6 +25,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
       apiKey: API_KEY,
       user: {
         id: user?.id,
+        type: 'authenticated',
         name: user?.username || user?.id,
         image: user?.imageUrl,
       },
@@ -32,8 +34,8 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
 
     setVideoClient(client);
   }, [user, isLoaded]);
-   if (!isLoaded && !user) {
-     router.push('/sign-in')
+   if ( user === undefined || !user) {
+    console.log("redirecting to sign in page")
      return <SiginInPage />;
    }
   if (!videoClient && user) return <Loader />;
