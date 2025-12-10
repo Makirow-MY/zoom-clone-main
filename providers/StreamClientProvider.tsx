@@ -17,10 +17,14 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const client = videoClient;
  const router = useRouter()
 
-   console.log("this is user",user)
+   console.log("this is user",user?.id)
   useEffect(() => {
     if (!API_KEY) throw new Error('Stream API key is missing');
-
+    if (!user?.id) {
+      // Not signed in → don't create client
+      setVideoClient(undefined);
+      return;
+    }
     const client = new StreamVideoClient({
       apiKey: API_KEY,
       user: {
@@ -40,7 +44,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
    }
   if (!videoClient && user) return <Loader />;
 
-  if (isLoaded && user) return <StreamVideo client={videoClient}>{children}</StreamVideo>;
+  if (isLoaded && user) return <StreamVideo client={videoClient!}>{children}</StreamVideo>;
 };
 
 export default StreamVideoProvider;
